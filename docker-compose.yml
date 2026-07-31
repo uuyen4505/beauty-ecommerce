@@ -1,0 +1,35 @@
+services:
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - uploads_data:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://localhost:8080/api
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
+
+volumes:
+  uploads_data:
